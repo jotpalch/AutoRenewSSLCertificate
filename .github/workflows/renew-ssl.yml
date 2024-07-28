@@ -26,17 +26,15 @@ jobs:
 
     - name: Run Certbot
       run: |
-        docker run \
-          --rm \
+        chmod +x ./godaddy-dns-challenge.sh
+        docker run --rm \
           -v /etc/letsencrypt:/etc/letsencrypt \
           -v $PWD:/scripts \
           -e GODADDY_API_KEY \
           -e GODADDY_API_SECRET \
-          -e CERTBOT_VALIDATION \
-          -ti certbot/certbot certonly \
-          --agree-tos \
-          --manual \
-          --preferred-challenges dns \
+          certbot/certbot \
+          certonly --non-interactive --agree-tos \
+          --manual --preferred-challenges dns \
           --manual-auth-hook /scripts/godaddy-dns-challenge.sh \
           --server https://acme-v02.api.letsencrypt.org/directory \
           -d "*.${{ env.DOMAIN }}"
