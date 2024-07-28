@@ -37,8 +37,10 @@ jobs:
           --manual --preferred-challenges dns \
           --manual-auth-hook /scripts/godaddy-dns-challenge.sh \
           --server https://acme-v02.api.letsencrypt.org/directory \
+          --force-renewal \
           -d "*.${{ env.DOMAIN }}"
 
     - name: Restart web server
+      if: success() 
       run: |
         sudo systemctl restart nginx

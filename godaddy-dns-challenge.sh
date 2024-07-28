@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 # GoDaddy API credentials
 API_KEY=$GODADDY_API_KEY
 API_SECRET=$GODADDY_API_SECRET
