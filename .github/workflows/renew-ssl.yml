@@ -41,5 +41,6 @@ jobs:
           -d "*.${{ env.DOMAIN }}"
 
     - name: Restart web server
+      if: success() 
       run: |
         sudo systemctl restart nginx
