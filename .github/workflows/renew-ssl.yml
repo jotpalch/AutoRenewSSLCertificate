@@ -1,0 +1,47 @@
+name: Renew SSL Certificate
+
+on:
+  schedule:
+    - cron: '0 0 1 */3 *'  # Run every 3 months on the 1st day
+  workflow_dispatch:  # Allow manual triggering
+
+env:
+  DOMAIN: jotpac.com
+
+jobs:
+  renew-ssl:
+    runs-on: jotp_server
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up GoDaddy API credentials
+      env:
+        GODADDY_API_KEY: ${{ secrets.GODADDY_API_KEY }}
+        GODADDY_API_SECRET: ${{ secrets.GODADDY_API_SECRET }}
+      run: |
+        echo "GODADDY_API_KEY=$GODADDY_API_KEY" >> $GITHUB_ENV
+        echo "GODADDY_API_SECRET=$GODADDY_API_SECRET" >> $GITHUB_ENV
+
+    - name: Run Certbot
+      run: |
+        chmod +x ./godaddy-dns-challenge.sh
+        docker run \
+          --rm \
+          -v /etc/letsencrypt:/etc/letsencrypt \
+          -v $PWD:/scripts \
+          -e GODADDY_API_KEY \
+          -e GODADDY_API_SECRET \
+          -e CERTBOT_VALIDATION \
+          -ti certbot/certbot certonly \
+          --agree-tos \
+          --manual \
+          --preferred-challenges dns \
+          --manual-auth-hook /scripts/godaddy-dns-challenge.sh \
+          --server https://acme-v02.api.letsencrypt.org/directory \
+          -d "*.${{ env.DOMAIN }}"
+
+    - name: Restart web server
+      run: |
+        sudo systemctl restart nginx
