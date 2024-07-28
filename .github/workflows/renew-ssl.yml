@@ -26,7 +26,6 @@ jobs:
 
     - name: Run Certbot
       run: |
-        chmod +x ./godaddy-dns-challenge.sh
         docker run \
           --rm \
           -v /etc/letsencrypt:/etc/letsencrypt \
