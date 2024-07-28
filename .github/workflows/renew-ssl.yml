@@ -10,7 +10,7 @@ env:
 
 jobs:
   renew-ssl:
-    runs-on: jotp_server
+    runs-on: self-hosted
     
     steps:
     - name: Checkout repository
