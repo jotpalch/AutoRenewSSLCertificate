@@ -1,4 +1,5 @@
 name: Renew SSL Certificate
+run-name: Renew SSL Certificate ${{ format(utcnow(), 'yyyyMMdd') }} 
 
 on:
   schedule:
