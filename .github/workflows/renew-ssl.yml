@@ -1,5 +1,5 @@
 name: Renew SSL Certificate
-run-name: Renew SSL Certificate ${{ format(utcnow(), 'yyyyMMdd') }} 
+run-name: Renew SSL Certificate #${{ github.run_number }}
 
 on:
   schedule:
@@ -10,6 +10,12 @@ env:
   DOMAIN: jotpac.com
 
 jobs:
+  display-date:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Display Current Date
+        run: echo "Renewing SSL Certificate on $(date '+%Y-%m-%d')"
+        
   renew-ssl:
     runs-on: self-hosted
     
