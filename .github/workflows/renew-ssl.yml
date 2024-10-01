@@ -39,7 +39,7 @@ jobs:
           -v $PWD:/scripts \
           -e GODADDY_API_KEY \
           -e GODADDY_API_SECRET \
-          certbot/certbot \
+          certbot/certbot:v2.10.0 \
           certonly --non-interactive --agree-tos \
           --manual --preferred-challenges dns \
           --manual-auth-hook /scripts/godaddy-dns-challenge.sh \
