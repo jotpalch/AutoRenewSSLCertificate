@@ -32,20 +32,23 @@ jobs:
         echo "GODADDY_API_SECRET=$GODADDY_API_SECRET" >> $GITHUB_ENV
 
     - name: Run Certbot
+      env:
+        GODADDY_API_KEY: ${{ secrets.GODADDY_API_KEY }}
+        GODADDY_API_SECRET: ${{ secrets.GODADDY_API_SECRET }}
       run: |
         chmod +x ./godaddy-dns-challenge.sh
         docker run --rm \
-          -v /etc/letsencrypt:/etc/letsencrypt \
-          -v $PWD:/scripts \
-          -e GODADDY_API_KEY \
-          -e GODADDY_API_SECRET \
-          certbot/certbot:v2.10.0 \
-          certonly --non-interactive --agree-tos \
-          --manual --preferred-challenges dns \
-          --manual-auth-hook /scripts/godaddy-dns-challenge.sh \
-          --server https://acme-v02.api.letsencrypt.org/directory \
-          --force-renewal \
-          -d "*.${{ env.DOMAIN }}"
+            -v /etc/letsencrypt:/etc/letsencrypt \
+            -v $PWD:/scripts \
+            -e GODADDY_API_KEY=${{ secrets.GODADDY_API_KEY }} \
+            -e GODADDY_API_SECRET=${{ secrets.GODADDY_API_SECRET }} \
+            certbot/certbot:v2.10.0 \
+            certonly --non-interactive --agree-tos \
+            --manual --preferred-challenges dns \
+            --manual-auth-hook /scripts/godaddy-dns-challenge.sh \
+            --server https://acme-v02.api.letsencrypt.org/directory \
+            --force-renewal \
+            -d "*.${{ env.DOMAIN }}" -d "${{ env.DOMAIN }}"
 
     - name: Restart web server
       if: success() 
